@@ -447,11 +447,18 @@ None of these change v1.0. Each one is listed in the `gaps` of the fixtures it a
 
    *Question:* Should TTL be set per field by policy?
 
-8. **A bucket decision point (DP-11)**: an agent deletes an object storage bucket, or makes one
-   public. ALLOW when `bucket_versioning_enabled` is true and the bucket is outside production;
-   DEFER otherwise.
+8. **A bucket decision point (DP-11).** No decision point covers object storage. This one exercises
+   the per-class fields (item 3), `exposure` and the affected list (item 5), in the format of
+   `DECISION_POINTS.md` section 4:
 
-   *Question:* Would you add a bucket decision point?
+   | ID | Proposed agent action | Seam queries | Key predicates | Expected CAGE verdict (target) |
+   |---|---|---|---|---|
+   | **DP-11** | `delete` an object storage bucket, or change its access to public | `get_resource_predicate`, `query_blast_radius` | `environment_tier`, `bucket_versioning_enabled`, `bucket_retention_locked`, `bucket_force_destroy`, `bucket_public_access`, `bucket_replicated_to`, affected resources with `exposure` | **ALLOW** a delete when outside production, versioned or replicated, and not retention-locked. **DENY** a delete of a retention-locked bucket. **DEFER → HITL** otherwise, and for any change that makes a bucket public. |
+
+   We have not added a DP-11 fixture: buckets are not a class we support today, so every key
+   predicate would be `NOT_AVAILABLE`. If you adopt it, we will answer it in Round 2.
+
+   *Question:* Would you add DP-11 to the decision points?
 
 9. **`managed_by_iac` in place of `managed_by_terraform`**: an enum naming the IaC tool
    (`TERRAFORM`, `OPENTOFU`, `PULUMI`, `CLOUDFORMATION`, `CDK`, `KUBERNETES`, and others), or `NONE`
