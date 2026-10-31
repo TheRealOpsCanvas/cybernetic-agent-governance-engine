@@ -78,8 +78,9 @@ We propose two rules for v1.1 (section 6):
   must be scoped by `resource_class`, so a default is never read. A default never stands in for
   unknown.
 
-Fixture URNs are GCP full resource names. Where a field is available for AWS today and planned for
-GCP and Azure, the fixture's `gaps` say so.
+Fixture URNs are GCP full resource names, and each fixture's fit is stated for GCP. Some
+capabilities are available for AWS today and planned for GCP and Azure; where that changes the
+answer, the fixture's notes give the AWS fit as well. Closing those gaps for GCP is near-term work.
 
 ## 2. Answers to Q1 to Q7
 
@@ -130,13 +131,27 @@ and the thing is not there, or nothing that would show it was read.
 
 > What freshness guarantee does a snapshot carry (`ttl_seconds`), and how is "confirmed" defined per edge?
 
-"Confirmed" means a practitioner reviewed and committed that node or edge. Each one carries
-`confirmed_at` and a provenance of `extracted` (read from a cited source), `inferred` (proposed by a
-model), or `operator` (stated by a person). These map naturally onto the per-field provenance
-proposal already queued for v1.1. We do not record deploy time.
+Each node and edge carries three times, which answer different questions:
 
-We suggest TTL be a policy choice per field rather than one window per snapshot. An environment tier
-rarely changes, while a dependents count can change with any deploy.
+| Time | Question it answers | Use |
+|---|---|---|
+| `last_read_at` | When was this fact's source last read? | Freshness. `STALE` is measured from it. |
+| `confirmed_at` | When did a practitioner review and commit this fact? | Trust, alongside provenance. |
+| Source commit | Which version of the IaC was read? | Lineage. It is `last_iac_commit_hash` on a predicate. |
+
+"Confirmed" means a practitioner reviewed and committed that node or edge. Its provenance is
+`extracted` (read from a cited source), `inferred` (proposed by a model), or `operator` (stated by a
+person). These map naturally onto the per-field provenance proposal already queued for v1.1. We do
+not record deploy time; deployment lineage, also queued for v1.1, would add it.
+
+A snapshot's `captured_at_utc` is the **oldest** `last_read_at` among the facts it returns. That is
+the fail-closed choice: one recently read fact cannot make a stale answer look fresh.
+
+Today sources are read when OpsCanvas scans them, not continuously, so a window of hours or days is
+realistic and a window of minutes is not. Minutes-scale freshness needs sources read continuously,
+which we plan with the hosted endpoint (Q5). We suggest TTL be a policy choice per field rather than
+one window per snapshot. An environment tier rarely changes, while a dependents count can change
+with any deploy. The fixtures use 86400 seconds as an example policy value.
 
 ### Q4. Snapshot hash and signing
 
@@ -147,23 +162,33 @@ whole-graph snapshot hash yet: that needs a stable graph position, which we plan
 an append-only change history. Signing with a `kid` that CAGE resolves from a manifest it fetches
 independently is feasible but not built.
 
-In the fixtures, `snapshot_hash` is sha256 over the JCS array of the content hashes of the facts an
-answer read. It shows which facts were used, not which graph state, and it is not signed.
+A fact's content hash is sha256 over the JCS form of the node or edge without its `content_hash`
+field. `snapshot_hash` is sha256 over the JCS array of the content hashes of the facts an answer
+read, sorted. It shows which facts were used, not which graph state, and it is not signed. In DP-03
+and DP-08, every hash reproduces from the snapshot in the fixture, and the predicate's hash covers the
+same facts. The other fixtures do not show the facts behind their predicates, so their hashes are
+illustrative.
 
 ### Q5. Transport and latency
 
 > Transport: MCP over stdio, SSE or streamable HTTP? What P99 latency should we expect for a predicate query?
 
-MCP over stdio, local to the practitioner, today. There is no hosted endpoint yet, so a gateway
-cannot reach OpsCanvas over the network. We have not measured latency. We propose latency budgets per
-domain rather than one budget across the seam.
+Round 1 target: a local OpsCanvas MCP server serving CAGE in an agentic harness over stdio. This is
+the transport your plan budgets for the synchronous FTRA path, and a local lookup is the best case
+for the 30 ms budget. We have not measured latency yet; we will once the server answers predicate
+queries. A hosted endpoint, next to CAGE in the customer's environment, is the next step, and we will
+decide its timing after Round 1. We propose latency budgets per domain rather than one budget across
+the seam.
 
 ### Q6. Sandbox estate
 
 > Can we get a sandbox estate for over-the-wire conformance tests?
 
-Yes, once a hosted endpoint exists. It needs an estate seeded in an account OpsCanvas owns, reachable
-by CAGE over the wire.
+Yes. For Round 1 we propose a seeded estate in an account OpsCanvas owns, read by the local MCP
+server, with CAGE connecting over stdio. Your integration plan (section 1.2, invariant 3) allows
+"physical wire/stdio transports against an authentic OpsCanvas daemon/sandbox"; `AGENTS.md` asks for
+HTTPS/mTLS against a live service. Does stdio against a local server reading a real seeded estate
+count as conformance evidence for Round 1? A hosted sandbox follows with the hosted endpoint.
 
 ### Q7. Blast radius score
 
@@ -197,6 +222,17 @@ The affected list depends on the action's parameters, not only its verb: scaling
 than scaling to 1. This is why we also propose per-verb parameters on `query_blast_radius`
 (section 6).
 
+This fits your latency budget by splitting the work across two paths:
+
+- **The synchronous FTRA path** keeps the counts on `query_blast_radius`, which OpsCanvas computes
+  ahead of time. Policy thresholds on them, and the answer stays small.
+- **The deferral path**, once an action is already parked for review, receives the full affected
+  list. A larger answer costs nothing there, the reviewer needs the list, and CAGE computes the score
+  from it.
+
+If you want a single number on the fast path, we can offer a provider score there as an optional
+cross-check.
+
 In v1.0, `estimated_affected_services` is the length of that list, and
 `estimated_blast_radius_score` is the strict placeholder `1.0`.
 
@@ -206,7 +242,7 @@ In v1.0, `estimated_affected_services` is the length of that list, and
 
 | Field | Fit | Roadmap | What the value means |
 |---|---|---|---|
-| `status` | NATIVE |  | `STALE` is derived: computed from when each fact was last confirmed (Q3). |
+| `status` | PARTIAL | PLANNED | `OK`, `UNAVAILABLE` and `INVALID` today. `STALE` is computed from when each fact's source was last read (Q3); a window of minutes needs sources read continuously, planned with the hosted endpoint. |
 | `resource_urn` | PARTIAL | PLANNED | Provider-native ID (Q1). Resolved to a declared resource for any provider, for the resource types we record today; resolved by provider ID for AWS today, GCP and Azure planned. |
 | `resource_type` | NATIVE |  | The provider's resource type. |
 | `is_load_bearing` | NOT_AVAILABLE | PLANNED | From inbound dependents and environment tier. |
@@ -223,7 +259,7 @@ In v1.0, `estimated_affected_services` is the length of that list, and
 | `reversibility_tier` | NOT_AVAILABLE | PLANNED | Computed from the per-class fields below, such as versioning, backups and deletion protection. |
 | `estimated_blast_radius_score` | NOT_AVAILABLE | PLANNED | We propose CAGE computes it from the affected resources we return (Q7). |
 | `compensating_rollback_action` | NOT_AVAILABLE | PLANNED | Per class, such as restoring from the latest snapshot where one exists. |
-| `snapshot_id`, `snapshot_hash` | PARTIAL | PLANNED | Identifies the facts an answer read, not a whole-graph state (Q4). |
+| `snapshot_id`, `snapshot_hash` | PARTIAL | PLANNED | sha256 over the content hashes of the facts an answer read. Identifies those facts, not a whole-graph state (Q4). |
 | `evaluated_at_utc` | NATIVE |  | |
 | `query_latency_ms` | NOT_AVAILABLE | PLANNED | Measured once the adapter exists (Q5). Omitted from the fixtures. |
 
@@ -288,25 +324,39 @@ Under the v1.1 proposal, any of these fields may be `null` when it applies but i
 
 | Field | Fit | Roadmap | What the value means |
 |---|---|---|---|
-| `nodes`, `edges` | NATIVE |  | Confirmed facts, each with provenance, `confirmed_at` and a content hash. Kinds and relations follow Operational Estate (section 6, item 10). |
-| `captured_at_utc` | DERIVED |  | The newest `confirmed_at` among the facts returned. |
+| `nodes`, `edges` | NATIVE |  | Confirmed facts, each with provenance, `confirmed_at`, `last_read_at` and a content hash. Kinds and relations follow Operational Estate (section 6, item 10). |
+| `captured_at_utc` | DERIVED |  | The oldest `last_read_at` among the facts returned (Q3). |
 | `ttl_seconds` | NOT_AVAILABLE | PLANNED | As a per-field policy value (Q3). |
 | `snapshot_id`, `snapshot_hash` | PARTIAL | PLANNED | As above. |
 
 ## 4. Decision points
 
+Fits are stated for GCP, the provider of the fixtures' URNs.
+
 | DP | Fit | Roadmap | Answered today | Planned |
 |---|---|---|---|---|
-| DP-01 | `NOT_AVAILABLE` | PLANNED | Resource type, IaC-managed | Environment tier, criticality, dependents, load-bearing, database fields |
+| DP-01 | `NOT_AVAILABLE` | PLANNED | Nothing for GCP. On AWS: IaC-managed | Environment tier, criticality, dependents, load-bearing, database fields |
 | DP-02 | `NOT_AVAILABLE` | PLANNED | IaC-managed, IaC commit | Drift, failover, affected list for CAGE's score |
 | DP-03 | `PARTIAL` | PLANNED | IaC commit | Drift |
-| DP-04 | `PARTIAL` | PLANNED | `UNMANAGED` (AWS) | Owner team, GCP and Azure |
-| DP-05 | `DERIVED` |  | `STALE` from confirmation time | None |
-| DP-06 | `NATIVE` |  | `UNAVAILABLE` | None |
+| DP-04 | `NOT_AVAILABLE` | PLANNED | Nothing for GCP. On AWS (`PARTIAL`): `UNMANAGED` | Unmanaged detection for GCP, owner team |
+| DP-05 | `PARTIAL` | PLANNED | `STALE` from last-read time, over hours or days | Minutes-scale freshness |
+| DP-06 | `NATIVE` |  | `UNAVAILABLE`, by design of the adapter | None |
 | DP-07 | `NOT_AVAILABLE` | PLANNED | Project known | Environment tier, reversibility |
 | DP-08 | `PARTIAL` | PLANNED | Workloads on the shared cluster | Their callers, approval tier |
-| DP-09 | `PARTIAL` | PLANNED | Resource not found | `NOT_FOUND` status |
-| DP-10 | `PARTIAL` | PLANNED | IaC-managed | Environment tier, volume fields, reversibility |
+| DP-09 | `PARTIAL` | PLANNED | Not in the graph (`not_covered` for GCP) | `NOT_FOUND` and `NOT_COVERED` statuses |
+| DP-10 | `NOT_AVAILABLE` | PLANNED | Nothing for GCP. On AWS (`PARTIAL`): IaC-managed | Environment tier, volume fields, reversibility |
+
+### Sequencing
+
+Seven of the ten decision points do not yet reach their target verdict on observed data. Where the
+fixtures reach it today, they do so on strict placeholders rather than observations; DP-05, DP-06
+and DP-09 reach it on what OpsCanvas actually observes. This is how the rest get there:
+
+- **First step:** a local OpsCanvas MCP server serving CAGE in an agentic harness (Q5), with
+  `STORAGE_VOLUME` as the first resource class. That moves DP-10 toward its target verdict on observed
+  data.
+- **Next:** the classes and fields marked `PLANNED`, the AWS-only capabilities for GCP, and a hosted
+  endpoint next to CAGE in the customer's environment, timed after Round 1.
 
 ## 5. Per-class predicates
 

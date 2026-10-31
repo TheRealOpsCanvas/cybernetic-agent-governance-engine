@@ -1,11 +1,13 @@
 {
   "decision_point_id": "DP-05",
   "schema_version": "1.0",
-  "fit": "DERIVED",
-  "notes": "Fit DERIVED, complete. STALE is computed by comparing confirmed_at, which every fact carries, with a window set by CAGE policy; 300 seconds is the seam default, used here as the policy value. captured_at_utc is the newest confirmed_at among the facts read. confirmed_at is when a practitioner last reviewed and committed the fact, so stale means not re-confirmed recently, not changed since. Other predicate values are strict fill; CAGE must not read them because the status is not OK.",
+  "fit": "PARTIAL",
+  "notes": "Fit PARTIAL, roadmap PLANNED. STALE is computed by comparing the oldest last_read_at among the facts read with a window set by CAGE policy. Using the oldest time is the fail-closed choice: one recently read fact cannot make a stale answer look fresh. confirmed_at says when a practitioner reviewed a fact, a trust signal, and is not used as the freshness clock. Today sources are read when OpsCanvas scans them, so a window of hours or days is realistic and a window of minutes is not. Other predicate values are strict fill; CAGE must not read them because the status is not OK.",
   "gaps": [
-    "deploy time: NOT_AVAILABLE, PLANNED. Freshness is measured from confirmation, not from the last deploy. Planned through deployment lineage, queued for v1.1.",
-    "snapshot_id, snapshot_hash: PARTIAL, PLANNED. sha256 over an RFC 8785 JCS array of the content hashes of the facts this answer read. It identifies those facts, not a whole-graph state, and is not signed (Q4).",
+    "status (STALE): PARTIAL, PLANNED. Freshness is measured from when each fact's source was last read. A window of minutes needs sources read continuously, which is planned with the hosted endpoint (Q3, Q5).",
+    "ttl_seconds: NOT_AVAILABLE, PLANNED. 86400 is a policy value chosen for this example. We propose TTL set per field by policy (Q3).",
+    "deploy time: NOT_AVAILABLE, PLANNED. Planned through deployment lineage, queued for v1.1.",
+    "snapshot_id, snapshot_hash: PARTIAL, PLANNED. Illustrative here: the facts this answer read are not shown in this fixture, so the hash cannot be reproduced from it. In a real answer it is computed as described in Q4.",
     "proposal: a roadmap field alongside fit, and structured gaps entries (field, fit, roadmap, reason) in place of this text prefix.",
     "proposal: per-field provenance (field_provenance, queued for v1.1)."
   ],
@@ -33,10 +35,10 @@
         "reversibility_tier": "IRREVERSIBLE_TERMINAL",
         "estimated_blast_radius_score": 1.0,
         "compensating_rollback_action": null,
-        "snapshot_id": "opscanvas:factset:b9d25765f4700cd7",
-        "snapshot_hash": "sha256:b9d25765f4700cd7ce36f2029fe78d04fdea742375cea9df62392701454f5cc9",
+        "snapshot_id": "opscanvas:factset:6ebce0ace8ab9223",
+        "snapshot_hash": "sha256:6ebce0ace8ab9223f0269acd797dfa84423a96fb4ad67020ae4fb431e1047b9a",
         "evaluated_at_utc": "2026-10-31T14:08:15Z",
-        "error": "stale: the newest confirmed_at among the facts this answer reads is 2026-10-30T09:15:22Z, older than the 300 second window set by policy."
+        "error": "stale: the oldest last_read_at among the facts this answer reads is 2026-10-28T09:15:22Z, older than the 86400-second window set by policy."
       }
     },
     {
@@ -47,13 +49,13 @@
       "result": {
         "status": "STALE",
         "scope": "project:acme-retail-prod-apps",
-        "snapshot_id": "opscanvas:factset:4f92f335d30ed059",
-        "snapshot_hash": "sha256:4f92f335d30ed05949465c4492ed381f9a38c6e6e54ca2048f52d30b0809db6e",
+        "snapshot_id": "opscanvas:factset:69f77e94e4e67ad1",
+        "snapshot_hash": "sha256:69f77e94e4e67ad1c91028020d9fe26262df43fab1f409a7e1f3691c4b029631",
         "nodes": [],
         "edges": [],
-        "captured_at_utc": "2026-10-30T09:15:22Z",
-        "ttl_seconds": 300,
-        "error": "stale: the newest confirmed_at among the facts this answer reads is 2026-10-30T09:15:22Z, older than the 300 second window set by policy."
+        "captured_at_utc": "2026-10-28T09:15:22Z",
+        "ttl_seconds": 86400,
+        "error": "stale: the oldest last_read_at among the facts this answer reads is 2026-10-28T09:15:22Z, older than the 86400-second window set by policy."
       }
     }
   ]

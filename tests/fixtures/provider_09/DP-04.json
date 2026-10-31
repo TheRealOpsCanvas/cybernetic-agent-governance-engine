@@ -1,10 +1,10 @@
 {
   "decision_point_id": "DP-04",
   "schema_version": "1.0",
-  "fit": "PARTIAL",
-  "notes": "Fit PARTIAL, roadmap PLANNED. Answered today, for AWS: managed_by_terraform false and iac_drift_status UNMANAGED. OpsCanvas identifies a resource that exists in the account but has no IaC record, which is how a resource created by hand in the console appears. owner_team_urn, needed to route the deferral, is planned. resource_urn is the provider-native full resource name (Q1).",
+  "fit": "NOT_AVAILABLE",
+  "notes": "Fit NOT_AVAILABLE for GCP, roadmap PLANNED. On AWS the fit is PARTIAL: OpsCanvas identifies a resource that exists in the account but has no IaC record, which is how a resource created by hand in the console appears, and answers managed_by_terraform false and iac_drift_status UNMANAGED. For GCP that detection is planned. owner_team_urn, needed to route the deferral, is planned on both. resource_type is read from the URN. resource_urn is the provider-native full resource name (Q1). Fit is stated for GCP, the provider of this URN.",
   "gaps": [
-    "managed_by_terraform, iac_drift_status: PARTIAL, PLANNED. false and UNMANAGED: the resource exists in the account without an IaC record. Available for AWS today, planned for GCP and Azure.",
+    "managed_by_terraform, iac_drift_status: PARTIAL, PLANNED. On AWS, OpsCanvas detects a resource that exists in the account without an IaC record and reports false and UNMANAGED. For GCP that detection is planned, so here false and UNMANAGED are placeholders.",
     "is_load_bearing: NOT_AVAILABLE, PLANNED. Placeholder true. Planned from inbound dependents and environment tier.",
     "direct_dependents_count: NOT_AVAILABLE, PLANNED. 0 is a placeholder for unknown, not none.",
     "transitive_dependency_depth: NOT_AVAILABLE, PLANNED. 0 is a placeholder for unknown, not none.",
@@ -16,8 +16,8 @@
     "reversibility_tier: NOT_AVAILABLE, PLANNED. Placeholder IRREVERSIBLE_TERMINAL. Planned as computed from the per-class fields.",
     "estimated_blast_radius_score: NOT_AVAILABLE, PLANNED. Placeholder 1.0. We propose CAGE computes the score from the affected resources (Q7).",
     "compensating_rollback_action: NOT_AVAILABLE, PLANNED. null. Planned per class, such as restoring from the latest snapshot.",
-    "snapshot_id, snapshot_hash: PARTIAL, PLANNED. sha256 over an RFC 8785 JCS array of the content hashes of the facts this answer read. It identifies those facts, not a whole-graph state, and is not signed (Q4).",
-    "query_latency_ms: NOT_AVAILABLE, PLANNED. Omitted. Measured once the adapter exists (Q5).",
+    "snapshot_id, snapshot_hash: PARTIAL, PLANNED. Illustrative here: the facts this answer read are not shown in this fixture, so the hash cannot be reproduced from it. In a real answer it is computed as described in Q4.",
+    "query_latency_ms: NOT_AVAILABLE, PLANNED. Omitted. Measured once the local MCP server answers predicate queries (Q5).",
     "proposal: a roadmap field alongside fit, and structured gaps entries (field, fit, roadmap, reason) in place of this text prefix.",
     "proposal: nullable predicate fields, with null meaning unknown, so a placeholder cannot be read as an answer.",
     "proposal: per-field provenance (field_provenance, queued for v1.1)."
@@ -46,8 +46,8 @@
         "reversibility_tier": "IRREVERSIBLE_TERMINAL",
         "estimated_blast_radius_score": 1.0,
         "compensating_rollback_action": null,
-        "snapshot_id": "opscanvas:factset:6134339bccd3c99c",
-        "snapshot_hash": "sha256:6134339bccd3c99c0d06751c85124f2d0e8bdb93812cc89a00c611048f186958",
+        "snapshot_id": "opscanvas:factset:3373ab58fe85bb9e",
+        "snapshot_hash": "sha256:3373ab58fe85bb9eb13fc90f8c9b09c99dfee79b7fbb9dc5df88bf88fbf19cb7",
         "evaluated_at_utc": "2026-10-31T14:06:27Z",
         "error": null
       }

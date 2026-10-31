@@ -2,7 +2,7 @@
   "decision_point_id": "DP-07",
   "schema_version": "1.0",
   "fit": "NOT_AVAILABLE",
-  "notes": "Fit NOT_AVAILABLE, roadmap PLANNED. Answered today: the project is known to OpsCanvas as a Cloud Account, with the resources confirmed within it. Neither key predicate is answered: environment_tier is planned, and OpsCanvas never infers a tier from a name such as sbx; reversibility_tier is planned. With the strict placeholders, CAGE would DEFER this deletion rather than ALLOW it. resource_urn is the provider-native full resource name (Q1).",
+  "notes": "Fit NOT_AVAILABLE, roadmap PLANNED. Answered today, for GCP and AWS alike: the project is known to OpsCanvas as a Cloud Account, with the resources confirmed within it. Neither key predicate is answered: environment_tier is planned, and OpsCanvas never infers a tier from a name such as sbx; reversibility_tier is planned. With the strict placeholders, CAGE would DEFER this deletion rather than ALLOW it. resource_urn is the provider-native full resource name (Q1). Fit is stated for GCP, the provider of this URN.",
   "gaps": [
     "environment_tier: NOT_AVAILABLE, PLANNED. Placeholder PRODUCTION, not SANDBOX. A tier is never inferred from a name.",
     "reversibility_tier: NOT_AVAILABLE, PLANNED. Placeholder IRREVERSIBLE_TERMINAL. Planned as computed from the per-class fields.",
@@ -16,8 +16,8 @@
     "owner_team_urn: NOT_AVAILABLE, PLANNED. Placeholder urn:opscanvas:team:unassigned, a sentinel, not a team.",
     "estimated_blast_radius_score: NOT_AVAILABLE, PLANNED. Placeholder 1.0. We propose CAGE computes the score from the affected resources (Q7).",
     "compensating_rollback_action: NOT_AVAILABLE, PLANNED. null. Planned per class, such as restoring from the latest snapshot.",
-    "snapshot_id, snapshot_hash: PARTIAL, PLANNED. sha256 over an RFC 8785 JCS array of the content hashes of the facts this answer read. It identifies those facts, not a whole-graph state, and is not signed (Q4).",
-    "query_latency_ms: NOT_AVAILABLE, PLANNED. Omitted. Measured once the adapter exists (Q5).",
+    "snapshot_id, snapshot_hash: PARTIAL, PLANNED. Illustrative here: the facts this answer read are not shown in this fixture, so the hash cannot be reproduced from it. In a real answer it is computed as described in Q4.",
+    "query_latency_ms: NOT_AVAILABLE, PLANNED. Omitted. Measured once the local MCP server answers predicate queries (Q5).",
     "proposal: a roadmap field alongside fit, and structured gaps entries (field, fit, roadmap, reason) in place of this text prefix.",
     "proposal: nullable predicate fields, with null meaning unknown, so a placeholder cannot be read as an answer.",
     "proposal: per-field provenance (field_provenance, queued for v1.1)."
@@ -46,8 +46,8 @@
         "reversibility_tier": "IRREVERSIBLE_TERMINAL",
         "estimated_blast_radius_score": 1.0,
         "compensating_rollback_action": null,
-        "snapshot_id": "opscanvas:factset:c93b5593896bf9dc",
-        "snapshot_hash": "sha256:c93b5593896bf9dc085e0b8daf9a7ac33539110c734eabff9ded32fee7f091ed",
+        "snapshot_id": "opscanvas:factset:0428b3b6cb3c8370",
+        "snapshot_hash": "sha256:0428b3b6cb3c83701e5bf094529a3edef311892044e3f0c589af68f7f82ae8e0",
         "evaluated_at_utc": "2026-10-31T14:11:36Z",
         "error": null
       }

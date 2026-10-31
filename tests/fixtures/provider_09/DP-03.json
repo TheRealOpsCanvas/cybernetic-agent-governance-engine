@@ -2,7 +2,7 @@
   "decision_point_id": "DP-03",
   "schema_version": "1.0",
   "fit": "PARTIAL",
-  "notes": "Fit PARTIAL, roadmap PLANNED. Answered today: last_iac_commit_hash, one of the two key predicates, plus resource_type, managed_by_terraform, and the snapshot's nodes and edges. Drift, the other key predicate, is planned, so iac_drift_status is DRIFT_DETECTED as a placeholder meaning unverified. CAGE still defers as the target verdict expects, but on a value nobody observed; per-field provenance or a nullable field would make that visible. Snapshot nodes use Operational Estate class names as kind, and edges use its relation names. resource_urn is the provider-native full resource name (Q1).",
+  "notes": "Fit PARTIAL, roadmap PLANNED. Answered today, for GCP and AWS alike: last_iac_commit_hash, one of the two key predicates, plus resource_type, managed_by_terraform, and the snapshot's nodes and edges. Drift, the other key predicate, is planned, so iac_drift_status is DRIFT_DETECTED as a placeholder meaning unverified. CAGE still defers as the target verdict expects, but on a value nobody observed. Each fact carries confirmed_at (when a practitioner confirmed it) and last_read_at (when its source was last read); captured_at_utc is the oldest last_read_at, and freshness is measured from it. Snapshot nodes use Operational Estate class names as kind and are identified by URN; edges use its relation names. resource_urn is the provider-native full resource name (Q1). Fit is stated for GCP, the provider of this URN.",
   "gaps": [
     "managed_by_terraform: PARTIAL, PLANNED. Reported true for a resource declared in any IaC tool, not only Terraform. We propose managed_by_iac (ROUND1_RESPONSE.md, section 6).",
     "is_load_bearing: NOT_AVAILABLE, PLANNED. Placeholder true. Planned from inbound dependents and environment tier.",
@@ -17,9 +17,9 @@
     "reversibility_tier: NOT_AVAILABLE, PLANNED. Placeholder IRREVERSIBLE_TERMINAL. Planned as computed from the per-class fields.",
     "estimated_blast_radius_score: NOT_AVAILABLE, PLANNED. Placeholder 1.0. We propose CAGE computes the score from the affected resources (Q7).",
     "compensating_rollback_action: NOT_AVAILABLE, PLANNED. null. Planned per class, such as restoring from the latest snapshot.",
-    "snapshot_id, snapshot_hash: PARTIAL, PLANNED. sha256 over an RFC 8785 JCS array of the content hashes of the facts this answer read. It identifies those facts, not a whole-graph state, and is not signed (Q4).",
-    "ttl_seconds: NOT_AVAILABLE, PLANNED. Omitted, so the seam default applies. We propose TTL set per field by policy (Q3).",
-    "query_latency_ms: NOT_AVAILABLE, PLANNED. Omitted. Measured once the adapter exists (Q5).",
+    "snapshot_id, snapshot_hash: PARTIAL, PLANNED. Reproducible: sha256 over the RFC 8785 JCS array, sorted, of the content hashes of the facts in this fixture's snapshot, which are the facts the predicate read. It identifies those facts, not a whole-graph state, and is not signed (Q4).",
+    "ttl_seconds: NOT_AVAILABLE, PLANNED. 86400 is a policy value chosen for this example. We propose TTL set per field by policy (Q3).",
+    "query_latency_ms: NOT_AVAILABLE, PLANNED. Omitted. Measured once the local MCP server answers predicate queries (Q5).",
     "proposal: a roadmap field alongside fit, and structured gaps entries (field, fit, roadmap, reason) in place of this text prefix.",
     "proposal: nullable predicate fields, with null meaning unknown, so a placeholder cannot be read as an answer.",
     "proposal: per-verb parameters on query_blast_radius, such as a target replica count for scale_down.",
@@ -50,8 +50,8 @@
         "reversibility_tier": "IRREVERSIBLE_TERMINAL",
         "estimated_blast_radius_score": 1.0,
         "compensating_rollback_action": null,
-        "snapshot_id": "opscanvas:factset:b17f0013f2e562fa",
-        "snapshot_hash": "sha256:b17f0013f2e562fab27631c6d760c676d303af0ee388f5bca2cc8b1a01a86857",
+        "snapshot_id": "opscanvas:factset:95b53d72ef78d1b6",
+        "snapshot_hash": "sha256:95b53d72ef78d1b6f3f1a13ccaf7f00aedc3ff6d9c0484350fadbac61c640064",
         "evaluated_at_utc": "2026-10-31T14:05:02Z",
         "error": null
       }
@@ -64,38 +64,40 @@
       "result": {
         "status": "OK",
         "scope": "project:acme-retail-prod-apps",
-        "snapshot_id": "opscanvas:factset:ba290de9da343329",
-        "snapshot_hash": "sha256:ba290de9da34332987ef28a095e9acc6c9088a8da36738b707412f4b0e90e81e",
+        "snapshot_id": "opscanvas:factset:95b53d72ef78d1b6",
+        "snapshot_hash": "sha256:95b53d72ef78d1b6f3f1a13ccaf7f00aedc3ff6d9c0484350fadbac61c640064",
         "nodes": [
           {
-            "id": "n1",
             "kind": "Deployed Resource",
             "resource_urn": "//run.googleapis.com/projects/acme-retail-prod-apps/locations/us-central1/services/orders-api",
             "resource_type": "run.googleapis.com/Service",
             "provenance": "extracted",
             "confirmed_at": "2026-10-29T17:44:08Z",
-            "content_hash": "sha256:76cf02a15bbf0980d049652d669c58febe5570743b8292355d0390a5b3c90db5"
+            "last_read_at": "2026-10-31T09:12:40Z",
+            "content_hash": "sha256:d905b957666e630b281142324ced78220952fd29a234662d240bd329734a276c"
           },
           {
-            "id": "n2",
             "kind": "Cloud Account",
             "resource_urn": "//cloudresourcemanager.googleapis.com/projects/acme-retail-prod-apps",
             "provenance": "extracted",
             "confirmed_at": "2026-10-29T17:44:08Z",
-            "content_hash": "sha256:3bba183f9798be867e58674c291c2409029efbb25460fba76ccfacbeb00f979f"
+            "last_read_at": "2026-10-31T09:12:40Z",
+            "content_hash": "sha256:2dc754bae2ed3732885fb05b82be68096c9d67aa7e9495c5e55524acb8d41793"
           }
         ],
         "edges": [
           {
-            "from": "n1",
+            "from": "//run.googleapis.com/projects/acme-retail-prod-apps/locations/us-central1/services/orders-api",
             "relation": "within",
-            "to": "n2",
+            "to": "//cloudresourcemanager.googleapis.com/projects/acme-retail-prod-apps",
             "provenance": "extracted",
             "confirmed_at": "2026-10-29T17:44:08Z",
-            "content_hash": "sha256:58b7b1f0a470516351ea2e50ffd00815046bf25281aff8c7b1d3c7039ea9e008"
+            "last_read_at": "2026-10-31T09:12:40Z",
+            "content_hash": "sha256:6409ab41bbc800a406f991f2389116c8363edc33d383e684b47cf49085809cc9"
           }
         ],
-        "captured_at_utc": "2026-10-31T14:05:03Z",
+        "captured_at_utc": "2026-10-31T09:12:40Z",
+        "ttl_seconds": 86400,
         "error": null
       }
     }
