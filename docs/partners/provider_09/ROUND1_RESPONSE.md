@@ -37,8 +37,8 @@ lower bound, is `PARTIAL` and `PLANNED`. Every roadmap in this response is `PLAN
 
 The v1.0 schema has no place for a roadmap, so each entry in a fixture's `gaps` starts with the
 field, its fit and its roadmap, for example
-`"resource_urn: PARTIAL, PLANNED. Resolved for AWS today; GCP and Azure planned."`. We propose a
-`roadmap` field for v1.1 (section 6).
+`"resource_urn: PARTIAL, PLANNED. Resolving by provider ID is available for AWS today and planned
+for GCP and Azure."`. We propose a `roadmap` field for v1.1 (section 6).
 
 ### Values for fields we cannot answer
 
@@ -98,11 +98,11 @@ GCP and Azure, the fixture's `gaps` say so.
 This is what an agent's tool call names, and it also names resources created in a console, which
 have no IaC declaration. The adapter resolves the URN to the OpsCanvas model (IaC declaration,
 environment, dependents) when it answers. A resource declared in a scanned repository resolves for
-any provider; resolving by provider ID alone is available for AWS today and planned for GCP and
-Azure.
+any provider, for the resource types we record today; resolving by provider ID alone is available
+for AWS today and planned for GCP and Azure.
 
-This is the Deployed Resource key in [Operational Estate](https://github.com/TheRealOpsCanvas/operational-estate), an open ontology of a software estate: "its
-provider and the provider's id for it" (section 6, item 10).
+This is the Deployed Resource key in [Operational Estate](https://github.com/TheRealOpsCanvas/operational-estate), an open ontology of a
+software estate: "its provider and the provider's id for it" (section 6, item 10).
 
 Stability: a rename that keeps the resource keeps the URN. A recreated resource gets a new URN,
 which is correct. Some moves change the provider ID, such as a GCP resource moved to another project
@@ -122,9 +122,9 @@ Both fail closed, but they mean different things. `NOT_FOUND` on a mutation is s
 `NOT_COVERED` is a coverage gap to fix. Until v1.1, DP-09 returns `INVALID` with a `not_found:`
 prefix on `error`.
 
-The same distinction is drawn in [Operational Estate](https://github.com/TheRealOpsCanvas/operational-estate) (section 8 of its specification): an answer about
-something the estate does not hold says whether the source was read and the thing is not there, or
-nothing that would show it was read.
+The same distinction is drawn in [Operational Estate](https://github.com/TheRealOpsCanvas/operational-estate) (section 8 of its
+specification): an answer about something the estate does not hold says whether the source was read
+and the thing is not there, or nothing that would show it was read.
 
 ### Q3. Freshness and "confirmed"
 
@@ -179,7 +179,7 @@ entry would carry:
 |---|---|
 | `resource_urn` | The affected resource. |
 | `resource_class` | Its class, such as `DATABASE` or `STORAGE_VOLUME` (section 5). |
-| `relation` | How it is affected, such as `connects_to`, `runs_on` or `replica_of`. |
+| `relation` | How it is affected, as an Operational Estate relation such as `connectsTo` or `runsOn` (section 6, item 10). |
 | `depth` | Hops from the target of the action. |
 | `environment_tier`, `criticality_tier` | As in the predicate. |
 | `exposure` | `PUBLIC` if the resource is reachable from the internet, `INTERNAL` otherwise. |
@@ -207,7 +207,7 @@ In v1.0, `estimated_affected_services` is the length of that list, and
 | Field | Fit | Roadmap | What the value means |
 |---|---|---|---|
 | `status` | NATIVE |  | `STALE` is derived: computed from when each fact was last confirmed (Q3). |
-| `resource_urn` | PARTIAL | PLANNED | Provider-native ID (Q1). Resolved to a declared resource for any provider; resolved by provider ID for AWS today, GCP and Azure planned. |
+| `resource_urn` | PARTIAL | PLANNED | Provider-native ID (Q1). Resolved to a declared resource for any provider, for the resource types we record today; resolved by provider ID for AWS today, GCP and Azure planned. |
 | `resource_type` | NATIVE |  | The provider's resource type. |
 | `is_load_bearing` | NOT_AVAILABLE | PLANNED | From inbound dependents and environment tier. |
 | `direct_dependents_count` | NOT_AVAILABLE | PLANNED | Today, only workloads that run on a resource are known (see `BlastRadiusEstimate`). |
@@ -230,8 +230,7 @@ In v1.0, `estimated_affected_services` is the length of that list, and
 ### Per-class fields (proposed)
 
 Each class adds these fields to the shared fields above (section 5). We intend to support
-`STORAGE_VOLUME` first. All are new; one is
-partly answered today.
+`STORAGE_VOLUME` first. All are new; one is partly answered today.
 
 **`DATABASE`**: a managed relational database instance.
 
@@ -317,8 +316,9 @@ is attached and backed up, deleting a bucket on whether its objects are versione
 locked. For the domain to be meaningful, the predicate needs fields for each resource class.
 
 We propose starting with three classes, named provider-neutrally: `DATABASE`, `STORAGE_VOLUME` and
-`OBJECT_BUCKET`. We intend to support `STORAGE_VOLUME` first. Their fields are listed in section 3. They give policy concrete inputs where a
-single `reversibility_tier` or `has_failover_redundancy` cannot. For example, deleting a bucket is
+`OBJECT_BUCKET`. We intend to support `STORAGE_VOLUME` first. Their fields are listed in section 3.
+They give policy concrete inputs where a single `reversibility_tier` or `has_failover_redundancy`
+cannot. For example, deleting a bucket is
 irreversible unless versioning is on or the bucket is replicated, and `bucket_force_destroy` makes
 it worse. DP-01 and DP-10 turn on the `DATABASE` and `STORAGE_VOLUME` fields. No decision point
 covers buckets yet; we propose one in section 6.
@@ -461,13 +461,15 @@ None of these change v1.0. Each one is listed in the `gaps` of the fixtures it a
 
    *Question:* Will you replace `managed_by_terraform` with a `managed_by_iac` enum?
 
-10. **Snapshot nodes and edges follow [Operational Estate](https://github.com/TheRealOpsCanvas/operational-estate)**, an open, vendor-neutral ontology of a
-    software estate. In v1.0, `nodes` and `edges` are untyped objects and `scope` has no grammar. We
-    propose that a node's `kind` is an ontology class (such as Deployed Resource, Cloud Account or
-    Service Instance), its key follows the ontology's key rules, and an edge's `relation` is an
-    ontology relation (such as `within`, `runsOn` or `connectsTo`). Our fixtures already use this
-    shape. The ontology is a draft, so the seam would pin a version. OpsCanvas started it and
-    maintains a reference implementation; the specification names no product.
+10. **Snapshot nodes and edges follow [Operational Estate](https://github.com/TheRealOpsCanvas/operational-estate)**, an open,
+    vendor-neutral ontology of a software estate. In v1.0, `nodes` and `edges` are untyped objects
+    and `scope` has no grammar. We propose that a node's `kind` is an ontology class (such as
+    Deployed Resource, Cloud Account or Service Instance), its key follows the ontology's key rules,
+    and an edge's `relation` is an ontology relation (such as `within`, `runsOn` or `connectsTo`).
+    Our fixtures use the ontology's class and relation names; they identify nodes by provider-native
+    URN rather than by the ontology's keys. The ontology is a draft, so the seam would pin a version.
+    OpsCanvas started it and maintains a reference implementation; the specification names no
+    product.
 
     *Questions:* Should snapshot nodes and edges follow Operational Estate, or do you want a
     CAGE-defined shape? And with the affected-resources list in item 5, is the snapshot still needed
