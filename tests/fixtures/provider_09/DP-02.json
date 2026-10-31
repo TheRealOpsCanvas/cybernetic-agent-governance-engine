@@ -1,0 +1,57 @@
+{
+  "decision_point_id": "DP-02",
+  "schema_version": "1.0",
+  "fit": "NOT_AVAILABLE",
+  "notes": "Fit NOT_AVAILABLE, roadmap PLANNED. Answered today, for GCP and AWS alike: resource_type, managed_by_terraform, and last_iac_commit_hash, the commit of the IaC that declares the service. None of the key predicates (has_failover_redundancy, estimated_blast_radius_score under 0.25, iac_drift_status SYNCHRONIZED) is answered today, so CAGE would DEFER this restart instead of allowing it. Drift and failover are planned; we propose CAGE computes the score (Q7). resource_urn is the provider-native full resource name (Q1). Fit is stated for GCP, the provider of this URN.",
+  "gaps": [
+    "managed_by_terraform: PARTIAL, PLANNED. Reported true for a resource declared in any IaC tool, not only Terraform. We propose managed_by_iac (ROUND1_RESPONSE.md, section 6).",
+    "is_load_bearing: NOT_AVAILABLE, PLANNED. Placeholder true. Planned from inbound dependents and environment tier.",
+    "direct_dependents_count: NOT_AVAILABLE, PLANNED. 0 is a placeholder for unknown, not none.",
+    "transitive_dependency_depth: NOT_AVAILABLE, PLANNED. 0 is a placeholder for unknown, not none.",
+    "has_failover_redundancy: NOT_AVAILABLE, PLANNED. Placeholder false. Planned from the per-class fields, starting with databases.",
+    "active_network_flows_last_1h: NOT_AVAILABLE, PLANNED. 0 is a placeholder for unknown, not none. Needs network flow data from the customer's account.",
+    "environment_tier: NOT_AVAILABLE, PLANNED. Placeholder PRODUCTION. A tier is never inferred from a name.",
+    "criticality_tier: NOT_AVAILABLE, PLANNED. Placeholder TIER_0, the strictest.",
+    "owner_team_urn: NOT_AVAILABLE, PLANNED. Placeholder urn:opscanvas:team:unassigned, a sentinel, not a team.",
+    "iac_drift_status: NOT_AVAILABLE, PLANNED. Placeholder DRIFT_DETECTED, meaning unverified.",
+    "reversibility_tier: NOT_AVAILABLE, PLANNED. Placeholder IRREVERSIBLE_TERMINAL. Planned as computed from the per-class fields.",
+    "estimated_blast_radius_score: NOT_AVAILABLE, PLANNED. Placeholder 1.0. We propose CAGE computes the score from the affected resources (Q7).",
+    "compensating_rollback_action: NOT_AVAILABLE, PLANNED. null. Planned per class, such as restoring from the latest snapshot.",
+    "snapshot_id, snapshot_hash: PARTIAL, PLANNED. Illustrative here: the facts this answer read are not shown in this fixture, so the hash cannot be reproduced from it. In a real answer it is computed as described in Q4.",
+    "query_latency_ms: NOT_AVAILABLE, PLANNED. Omitted. Measured once the local MCP server answers predicate queries (Q5).",
+    "proposal: a roadmap field alongside fit, and structured gaps entries (field, fit, roadmap, reason) in place of this text prefix.",
+    "proposal: nullable predicate fields, with null meaning unknown, so a placeholder cannot be read as an answer.",
+    "proposal: per-field provenance (field_provenance, queued for v1.1)."
+  ],
+  "answers": [
+    {
+      "method": "get_resource_predicate",
+      "args": {
+        "resource_urn": "//run.googleapis.com/projects/acme-retail-prod-apps/locations/us-central1/services/reporting-api"
+      },
+      "result": {
+        "status": "OK",
+        "resource_urn": "//run.googleapis.com/projects/acme-retail-prod-apps/locations/us-central1/services/reporting-api",
+        "resource_type": "run.googleapis.com/Service",
+        "is_load_bearing": true,
+        "direct_dependents_count": 0,
+        "transitive_dependency_depth": 0,
+        "has_failover_redundancy": false,
+        "active_network_flows_last_1h": 0,
+        "environment_tier": "PRODUCTION",
+        "criticality_tier": "TIER_0",
+        "owner_team_urn": "urn:opscanvas:team:unassigned",
+        "managed_by_terraform": true,
+        "iac_drift_status": "DRIFT_DETECTED",
+        "last_iac_commit_hash": "8d2f4c71a0b93e5d6f17c2a84b90e3d15c6a7f02",
+        "reversibility_tier": "IRREVERSIBLE_TERMINAL",
+        "estimated_blast_radius_score": 1.0,
+        "compensating_rollback_action": null,
+        "snapshot_id": "opscanvas:factset:5dc6e3cbee3a3319",
+        "snapshot_hash": "sha256:5dc6e3cbee3a33190a213989e997df32ff14b30d88d095c0371ead0b98599ba2",
+        "evaluated_at_utc": "2026-10-31T14:03:40Z",
+        "error": null
+      }
+    }
+  ]
+}

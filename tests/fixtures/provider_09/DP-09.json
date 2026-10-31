@@ -1,0 +1,42 @@
+{
+  "decision_point_id": "DP-09",
+  "schema_version": "1.0",
+  "fit": "PARTIAL",
+  "notes": "Fit PARTIAL, roadmap PLANNED. OpsCanvas can tell that no resource matches this URN, and CAGE fails closed on INVALID as the target verdict expects. What v1.0 cannot express is why. For GCP the honest reason is not_covered: OpsCanvas does not yet see GCP resources that have no IaC record, so absence from the graph does not prove the resource does not exist. On AWS, where such resources are seen, the same answer would be not_found. The error carries the prefix until v1.1 adds the statuses. Fields other than status, resource_urn, resource_type and error are strict fill required by the v1.0 schema on a non-OK result, not observations.",
+  "gaps": [
+    "status: PARTIAL, PLANNED. v1.0 has no status for a resource that is not in the graph. INVALID is used because UNAVAILABLE would misreport the provider as unreachable and STALE as out of date.",
+    "proposal: NOT_FOUND (does not exist in an account the estate covers) and NOT_COVERED (outside what the estate covers), distinct from INVALID (Q2).",
+    "proposal: a roadmap field alongside fit, and structured gaps entries (field, fit, roadmap, reason) in place of this text prefix."
+  ],
+  "answers": [
+    {
+      "method": "get_resource_predicate",
+      "args": {
+        "resource_urn": "//run.googleapis.com/projects/acme-retail-prod-apps/locations/us-central1/services/inventory-sync"
+      },
+      "result": {
+        "status": "INVALID",
+        "resource_urn": "//run.googleapis.com/projects/acme-retail-prod-apps/locations/us-central1/services/inventory-sync",
+        "resource_type": "run.googleapis.com/Service",
+        "is_load_bearing": true,
+        "direct_dependents_count": 0,
+        "transitive_dependency_depth": 0,
+        "has_failover_redundancy": false,
+        "active_network_flows_last_1h": 0,
+        "environment_tier": "PRODUCTION",
+        "criticality_tier": "TIER_0",
+        "owner_team_urn": "urn:opscanvas:team:unassigned",
+        "managed_by_terraform": false,
+        "iac_drift_status": "UNMANAGED",
+        "last_iac_commit_hash": null,
+        "reversibility_tier": "IRREVERSIBLE_TERMINAL",
+        "estimated_blast_radius_score": 1.0,
+        "compensating_rollback_action": null,
+        "snapshot_id": "opscanvas:factset:32ff25a74be779d8",
+        "snapshot_hash": "sha256:32ff25a74be779d832acb68b72e49ee1e05720c9cbbddd0af5e1f2e7f5cf1053",
+        "evaluated_at_utc": "2026-10-31T14:15:44Z",
+        "error": "not_covered: no resource with this URN is in the graph. For GCP, OpsCanvas does not yet see resources that have no IaC record, so it cannot say this resource does not exist."
+      }
+    }
+  ]
+}
