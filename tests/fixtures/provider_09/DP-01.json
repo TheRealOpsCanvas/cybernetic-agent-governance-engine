@@ -1,0 +1,84 @@
+{
+  "decision_point_id": "DP-01",
+  "schema_version": "1.0",
+  "fit": "NOT_AVAILABLE",
+  "notes": "Fit NOT_AVAILABLE, roadmap PLANNED. Answered today, for AWS: resource_type and managed_by_terraform. None of the key predicates (environment_tier, criticality_tier, is_load_bearing, has_failover_redundancy) is answered today. All are planned; failover and the replica's role come through the proposed DATABASE fields. With the placeholders, CAGE defers at VP_ENG, which matches the target verdict, but on values nobody observed. resource_urn is the provider-native full resource name (Q1).",
+  "gaps": [
+    "resource_urn: PARTIAL, PLANNED. Resolving by provider ID is available for AWS today and planned for GCP and Azure. This resource type is not yet resolved through a declaration.",
+    "managed_by_terraform: PARTIAL, PLANNED. Reported true for a resource declared in any IaC tool, not only Terraform. We propose managed_by_iac (ROUND1_RESPONSE.md, section 6).",
+    "is_load_bearing: NOT_AVAILABLE, PLANNED. Placeholder true. Planned from inbound dependents and environment tier.",
+    "direct_dependents_count: NOT_AVAILABLE, PLANNED. 0 is a placeholder for unknown, not none.",
+    "transitive_dependency_depth: NOT_AVAILABLE, PLANNED. 0 is a placeholder for unknown, not none.",
+    "has_failover_redundancy: NOT_AVAILABLE, PLANNED. Placeholder false. Planned from the per-class fields, starting with databases.",
+    "active_network_flows_last_1h: NOT_AVAILABLE, PLANNED. 0 is a placeholder for unknown, not none. Needs network flow data from the customer's account.",
+    "environment_tier: NOT_AVAILABLE, PLANNED. Placeholder PRODUCTION. A tier is never inferred from a name.",
+    "criticality_tier: NOT_AVAILABLE, PLANNED. Placeholder TIER_0, the strictest.",
+    "owner_team_urn: NOT_AVAILABLE, PLANNED. Placeholder urn:opscanvas:team:unassigned, a sentinel, not a team.",
+    "iac_drift_status: NOT_AVAILABLE, PLANNED. Placeholder DRIFT_DETECTED, meaning unverified.",
+    "reversibility_tier: NOT_AVAILABLE, PLANNED. Placeholder IRREVERSIBLE_TERMINAL. Planned as computed from the per-class fields.",
+    "estimated_blast_radius_score: NOT_AVAILABLE, PLANNED. Placeholder 1.0. We propose CAGE computes the score from the affected resources (Q7).",
+    "compensating_rollback_action: NOT_AVAILABLE, PLANNED. null. Planned per class, such as restoring from the latest snapshot.",
+    "last_iac_commit_hash: NOT_AVAILABLE, PLANNED. null for this resource. Available today for resources that run workloads.",
+    "snapshot_id, snapshot_hash: PARTIAL, PLANNED. sha256 over an RFC 8785 JCS array of the content hashes of the facts this answer read. It identifies those facts, not a whole-graph state, and is not signed (Q4).",
+    "query_latency_ms: NOT_AVAILABLE, PLANNED. Omitted. Measured once the adapter exists (Q5).",
+    "estimated_affected_services: NOT_AVAILABLE, PLANNED. 0 is a placeholder for unknown, not none.",
+    "estimated_affected_users: NOT_AVAILABLE, NOT_PLANNED. 0 is a placeholder for unknown, not none. A count of end users cannot be known from the estate; we propose exposure (PUBLIC or INTERNAL) on each affected resource instead (Q7).",
+    "estimated_recovery_time_minutes: NOT_AVAILABLE, PLANNED. 0 is a placeholder for unknown, not none.",
+    "requires_approval, approval_tier: NOT_AVAILABLE, PLANNED. Placeholder true and VP_ENG, the strictest.",
+    "proposal: a roadmap field alongside fit, and structured gaps entries (field, fit, roadmap, reason) in place of this text prefix.",
+    "proposal: resource_class plus per-class predicate fields (ROUND1_RESPONSE.md, section 5).",
+    "proposal: nullable predicate fields, with null meaning unknown, so a placeholder cannot be read as an answer.",
+    "proposal: query_blast_radius returns the affected resources, each with its exposure, and CAGE computes the score (Q7).",
+    "proposal: per-verb parameters on query_blast_radius, such as a target replica count for scale_down.",
+    "proposal: per-field provenance (field_provenance, queued for v1.1)."
+  ],
+  "answers": [
+    {
+      "method": "get_resource_predicate",
+      "args": {
+        "resource_urn": "//sqladmin.googleapis.com/projects/acme-retail-prod-data/instances/orders-replica-1"
+      },
+      "result": {
+        "status": "OK",
+        "resource_urn": "//sqladmin.googleapis.com/projects/acme-retail-prod-data/instances/orders-replica-1",
+        "resource_type": "sqladmin.googleapis.com/Instance",
+        "is_load_bearing": true,
+        "direct_dependents_count": 0,
+        "transitive_dependency_depth": 0,
+        "has_failover_redundancy": false,
+        "active_network_flows_last_1h": 0,
+        "environment_tier": "PRODUCTION",
+        "criticality_tier": "TIER_0",
+        "owner_team_urn": "urn:opscanvas:team:unassigned",
+        "managed_by_terraform": true,
+        "iac_drift_status": "DRIFT_DETECTED",
+        "last_iac_commit_hash": null,
+        "reversibility_tier": "IRREVERSIBLE_TERMINAL",
+        "estimated_blast_radius_score": 1.0,
+        "compensating_rollback_action": null,
+        "snapshot_id": "opscanvas:factset:2e1588d5d00e9191",
+        "snapshot_hash": "sha256:2e1588d5d00e9191e4c0835c56f27d2d2336f8eb65d38ebcf027ce9e293036b3",
+        "evaluated_at_utc": "2026-10-31T14:02:11Z",
+        "error": null
+      }
+    },
+    {
+      "method": "query_blast_radius",
+      "args": {
+        "resource_urn": "//sqladmin.googleapis.com/projects/acme-retail-prod-data/instances/orders-replica-1",
+        "action": "delete"
+      },
+      "result": {
+        "status": "OK",
+        "resource_urn": "//sqladmin.googleapis.com/projects/acme-retail-prod-data/instances/orders-replica-1",
+        "action": "delete",
+        "estimated_affected_services": 0,
+        "estimated_affected_users": 0,
+        "estimated_recovery_time_minutes": 0,
+        "requires_approval": true,
+        "approval_tier": "VP_ENG",
+        "error": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "decision_point_id": "DP-06",
+  "schema_version": "1.0",
+  "fit": "NATIVE",
+  "notes": "Fit NATIVE, complete. The adapter returns UNAVAILABLE whenever OpsCanvas cannot be reached or does not answer in time, and never raises, so CAGE fails closed and records the refusal. The deadline that triggers UNAVAILABLE is configuration, to be agreed once latency is measured (Q5). Fields other than status, resource_urn, resource_type and error are strict fill required by the v1.0 schema on a non-OK result, not observations.",
+  "gaps": [],
+  "answers": [
+    {
+      "method": "get_resource_predicate",
+      "args": {
+        "resource_urn": "//container.googleapis.com/projects/acme-retail-prod-apps/locations/us-central1/clusters/apps-prod"
+      },
+      "result": {
+        "status": "UNAVAILABLE",
+        "resource_urn": "//container.googleapis.com/projects/acme-retail-prod-apps/locations/us-central1/clusters/apps-prod",
+        "resource_type": "container.googleapis.com/Cluster",
+        "is_load_bearing": true,
+        "direct_dependents_count": 0,
+        "transitive_dependency_depth": 0,
+        "has_failover_redundancy": false,
+        "active_network_flows_last_1h": 0,
+        "environment_tier": "PRODUCTION",
+        "criticality_tier": "TIER_0",
+        "owner_team_urn": "urn:opscanvas:team:unassigned",
+        "managed_by_terraform": false,
+        "iac_drift_status": "UNMANAGED",
+        "last_iac_commit_hash": null,
+        "reversibility_tier": "IRREVERSIBLE_TERMINAL",
+        "estimated_blast_radius_score": 1.0,
+        "compensating_rollback_action": null,
+        "snapshot_id": "opscanvas:factset:8ba1768973b6af9e",
+        "snapshot_hash": "sha256:8ba1768973b6af9ee331e954a433a900d0d3303407ef8df5faabf76d6aceee9d",
+        "evaluated_at_utc": "2026-10-31T14:09:51Z",
+        "error": "unavailable: the OpsCanvas MCP server did not answer within the adapter's deadline."
+      }
+    }
+  ]
+}

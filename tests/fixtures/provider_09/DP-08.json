@@ -1,0 +1,194 @@
+{
+  "decision_point_id": "DP-08",
+  "schema_version": "1.0",
+  "fit": "PARTIAL",
+  "notes": "Fit PARTIAL, roadmap PLANNED. Answered today: the cluster, its project, the four Service Instances confirmed to run on it, managed_by_terraform and last_iac_commit_hash. estimated_affected_services is PARTIAL: a lower bound from those workloads, with their callers planned. direct_dependents_count, transitive_dependency_depth and approval_tier are planned; approval_tier is the strictest placeholder, not a recommendation from the estate. The v1.0 arguments cannot say whether set_iam_policy adds or removes access; see the per-verb parameters proposal. Snapshot nodes use Operational Estate class names as kind, and edges use its relation names. resource_urn is the provider-native full resource name (Q1).",
+  "gaps": [
+    "managed_by_terraform: PARTIAL, PLANNED. Reported true for a resource declared in any IaC tool, not only Terraform. We propose managed_by_iac (ROUND1_RESPONSE.md, section 6).",
+    "is_load_bearing: NOT_AVAILABLE, PLANNED. Placeholder true. Planned from inbound dependents and environment tier.",
+    "direct_dependents_count: NOT_AVAILABLE, PLANNED. 0 is a placeholder for unknown, not none.",
+    "transitive_dependency_depth: NOT_AVAILABLE, PLANNED. 0 is a placeholder for unknown, not none.",
+    "has_failover_redundancy: NOT_AVAILABLE, PLANNED. Placeholder false. Planned from the per-class fields, starting with databases.",
+    "active_network_flows_last_1h: NOT_AVAILABLE, PLANNED. 0 is a placeholder for unknown, not none. Needs network flow data from the customer's account.",
+    "environment_tier: NOT_AVAILABLE, PLANNED. Placeholder PRODUCTION. A tier is never inferred from a name.",
+    "criticality_tier: NOT_AVAILABLE, PLANNED. Placeholder TIER_0, the strictest.",
+    "owner_team_urn: NOT_AVAILABLE, PLANNED. Placeholder urn:opscanvas:team:unassigned, a sentinel, not a team.",
+    "iac_drift_status: NOT_AVAILABLE, PLANNED. Placeholder DRIFT_DETECTED, meaning unverified.",
+    "reversibility_tier: NOT_AVAILABLE, PLANNED. Placeholder IRREVERSIBLE_TERMINAL. Planned as computed from the per-class fields.",
+    "estimated_blast_radius_score: NOT_AVAILABLE, PLANNED. Placeholder 1.0. We propose CAGE computes the score from the affected resources (Q7).",
+    "compensating_rollback_action: NOT_AVAILABLE, PLANNED. null. Planned per class, such as restoring from the latest snapshot.",
+    "estimated_affected_services: PARTIAL, PLANNED. A lower bound: the workloads that run on this resource. Their callers are planned.",
+    "estimated_affected_users: NOT_AVAILABLE, NOT_PLANNED. 0 is a placeholder for unknown, not none. A count of end users cannot be known from the estate; we propose exposure (PUBLIC or INTERNAL) on each affected resource instead (Q7).",
+    "estimated_recovery_time_minutes: NOT_AVAILABLE, PLANNED. 0 is a placeholder for unknown, not none.",
+    "requires_approval, approval_tier: NOT_AVAILABLE, PLANNED. Placeholder true and VP_ENG, the strictest.",
+    "snapshot_id, snapshot_hash: PARTIAL, PLANNED. sha256 over an RFC 8785 JCS array of the content hashes of the facts this answer read. It identifies those facts, not a whole-graph state, and is not signed (Q4).",
+    "ttl_seconds: NOT_AVAILABLE, PLANNED. Omitted, so the seam default applies. We propose TTL set per field by policy (Q3).",
+    "query_latency_ms: NOT_AVAILABLE, PLANNED. Omitted. Measured once the adapter exists (Q5).",
+    "proposal: a roadmap field alongside fit, and structured gaps entries (field, fit, roadmap, reason) in place of this text prefix.",
+    "proposal: nullable predicate fields, with null meaning unknown, so a placeholder cannot be read as an answer.",
+    "proposal: query_blast_radius returns the affected resources, each with its exposure, and CAGE computes the score (Q7).",
+    "proposal: per-verb parameters on query_blast_radius, such as a target replica count for scale_down.",
+    "proposal: snapshot nodes and edges follow Operational Estate classes and relations, as in this fixture.",
+    "proposal: per-field provenance (field_provenance, queued for v1.1)."
+  ],
+  "answers": [
+    {
+      "method": "get_resource_predicate",
+      "args": {
+        "resource_urn": "//container.googleapis.com/projects/acme-retail-shared-platform/locations/us-central1/clusters/platform-prod"
+      },
+      "result": {
+        "status": "OK",
+        "resource_urn": "//container.googleapis.com/projects/acme-retail-shared-platform/locations/us-central1/clusters/platform-prod",
+        "resource_type": "container.googleapis.com/Cluster",
+        "is_load_bearing": true,
+        "direct_dependents_count": 0,
+        "transitive_dependency_depth": 0,
+        "has_failover_redundancy": false,
+        "active_network_flows_last_1h": 0,
+        "environment_tier": "PRODUCTION",
+        "criticality_tier": "TIER_0",
+        "owner_team_urn": "urn:opscanvas:team:unassigned",
+        "managed_by_terraform": true,
+        "iac_drift_status": "DRIFT_DETECTED",
+        "last_iac_commit_hash": "e7a05c2d91f8b346c0d1a9e72f5b38c64d0e1a9b",
+        "reversibility_tier": "IRREVERSIBLE_TERMINAL",
+        "estimated_blast_radius_score": 1.0,
+        "compensating_rollback_action": null,
+        "snapshot_id": "opscanvas:factset:46d12de596c81efe",
+        "snapshot_hash": "sha256:46d12de596c81efe174e1fd4ae337d55dbe75a6b831f39f37ce29a309ad2b5b5",
+        "evaluated_at_utc": "2026-10-31T14:13:09Z",
+        "error": null
+      }
+    },
+    {
+      "method": "query_blast_radius",
+      "args": {
+        "resource_urn": "//container.googleapis.com/projects/acme-retail-shared-platform/locations/us-central1/clusters/platform-prod",
+        "action": "set_iam_policy"
+      },
+      "result": {
+        "status": "OK",
+        "resource_urn": "//container.googleapis.com/projects/acme-retail-shared-platform/locations/us-central1/clusters/platform-prod",
+        "action": "set_iam_policy",
+        "estimated_affected_services": 4,
+        "estimated_affected_users": 0,
+        "estimated_recovery_time_minutes": 0,
+        "requires_approval": true,
+        "approval_tier": "VP_ENG",
+        "error": null
+      }
+    },
+    {
+      "method": "get_topology_snapshot",
+      "args": {
+        "scope": "project:acme-retail-shared-platform"
+      },
+      "result": {
+        "status": "OK",
+        "scope": "project:acme-retail-shared-platform",
+        "snapshot_id": "opscanvas:factset:375678376f90f4c8",
+        "snapshot_hash": "sha256:375678376f90f4c82cfaee24fd99ea693a7c6c810c97bc4a9b656287982b9737",
+        "nodes": [
+          {
+            "id": "n1",
+            "kind": "Deployed Resource",
+            "resource_urn": "//container.googleapis.com/projects/acme-retail-shared-platform/locations/us-central1/clusters/platform-prod",
+            "resource_type": "container.googleapis.com/Cluster",
+            "provenance": "extracted",
+            "confirmed_at": "2026-10-27T15:20:41Z",
+            "content_hash": "sha256:5107ee619ec60c00519e9b059db758183a0ecf816b83824521488283dbaf0c74"
+          },
+          {
+            "id": "n2",
+            "kind": "Cloud Account",
+            "resource_urn": "//cloudresourcemanager.googleapis.com/projects/acme-retail-shared-platform",
+            "provenance": "extracted",
+            "confirmed_at": "2026-10-27T15:20:41Z",
+            "content_hash": "sha256:22297c12bb0094cff47a6916f9f541e743919c1cc754cebb3332213acd2b9c25"
+          },
+          {
+            "id": "n3",
+            "kind": "Service Instance",
+            "resource_urn": "//container.googleapis.com/projects/acme-retail-shared-platform/locations/us-central1/clusters/platform-prod/k8s/namespaces/orders/apps/deployments/orders-api",
+            "name": "orders-api",
+            "provenance": "extracted",
+            "confirmed_at": "2026-10-27T15:20:41Z",
+            "content_hash": "sha256:0327b9db4b04a6c2565fb508947d9b2604e306df30baac4304492cac146d2975"
+          },
+          {
+            "id": "n4",
+            "kind": "Service Instance",
+            "resource_urn": "//container.googleapis.com/projects/acme-retail-shared-platform/locations/us-central1/clusters/platform-prod/k8s/namespaces/checkout/apps/deployments/checkout-api",
+            "name": "checkout-api",
+            "provenance": "extracted",
+            "confirmed_at": "2026-10-27T15:20:41Z",
+            "content_hash": "sha256:7ff5d49e6d5f9eee4d348a53963cae82c73cd14d9a3336e027a3afbfd863f8de"
+          },
+          {
+            "id": "n5",
+            "kind": "Service Instance",
+            "resource_urn": "//container.googleapis.com/projects/acme-retail-shared-platform/locations/us-central1/clusters/platform-prod/k8s/namespaces/catalog/apps/deployments/catalog-api",
+            "name": "catalog-api",
+            "provenance": "extracted",
+            "confirmed_at": "2026-10-27T15:20:41Z",
+            "content_hash": "sha256:ee8a984b132065e569e691469e473aef7b919ae22b141b2532045e5a1861c73b"
+          },
+          {
+            "id": "n6",
+            "kind": "Service Instance",
+            "resource_urn": "//container.googleapis.com/projects/acme-retail-shared-platform/locations/us-central1/clusters/platform-prod/k8s/namespaces/payments/apps/deployments/payments-worker",
+            "name": "payments-worker",
+            "provenance": "extracted",
+            "confirmed_at": "2026-10-27T15:20:41Z",
+            "content_hash": "sha256:e8280c25c86120b92bd285fe592175257bc93b430c7a82397bbba9e28a534b33"
+          }
+        ],
+        "edges": [
+          {
+            "from": "n1",
+            "relation": "within",
+            "to": "n2",
+            "provenance": "extracted",
+            "confirmed_at": "2026-10-27T15:20:41Z",
+            "content_hash": "sha256:58b7b1f0a470516351ea2e50ffd00815046bf25281aff8c7b1d3c7039ea9e008"
+          },
+          {
+            "from": "n3",
+            "relation": "runsOn",
+            "to": "n1",
+            "provenance": "extracted",
+            "confirmed_at": "2026-10-27T15:20:41Z",
+            "content_hash": "sha256:20ecb91b6be5218e9dfc60c7573f0fbcbabf353a41f1284caaef4245db27184d"
+          },
+          {
+            "from": "n4",
+            "relation": "runsOn",
+            "to": "n1",
+            "provenance": "extracted",
+            "confirmed_at": "2026-10-27T15:20:41Z",
+            "content_hash": "sha256:216e813287fe67c4f548751bfeabf8f8da536f4b11b9eda07baf17839e3bf397"
+          },
+          {
+            "from": "n5",
+            "relation": "runsOn",
+            "to": "n1",
+            "provenance": "extracted",
+            "confirmed_at": "2026-10-27T15:20:41Z",
+            "content_hash": "sha256:ce6917c9e63fc202f93555d4983dd5e35e2553cd6c3a85fa3f465636c0b450f9"
+          },
+          {
+            "from": "n6",
+            "relation": "runsOn",
+            "to": "n1",
+            "provenance": "extracted",
+            "confirmed_at": "2026-10-27T15:20:41Z",
+            "content_hash": "sha256:20e433371d120a5fc4ffa2f45e6bb993c7a92d12ad3060e00e5ade08c7e47242"
+          }
+        ],
+        "captured_at_utc": "2026-10-31T14:13:10Z",
+        "error": null
+      }
+    }
+  ]
+}
